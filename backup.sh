@@ -150,7 +150,8 @@ message-players "Starting backup..." "$ARCHIVE_FILE_NAME"
 LOCAL_DUP_DIR="file://$LOCAL_BACKUP_DIRECTORY"
 START_TIME=$(date +"%s")
 
-${PREFIX_CMD} duplicity --exclude $DATA_DIR/.git --no-encryption --allow-source-mismatch --full-if-older-than $BK_FULL_FREQ $DATA_DIR $LOCAL_DUP_DIR
+${PREFIX_CMD} duplicity --exclude "**/.git/**" --exclude "**/cache/**" --exclude "**/libraries/**" --exclude "**/logs/**" --exclude "**/versions/**" \
+  --no-encryption --allow-source-mismatch --full-if-older-than $BK_FULL_FREQ $DATA_DIR $LOCAL_DUP_DIR
 ${PREFIX_CMD} duplicity --allow-source-mismatch remove-all-but-n-full $BK_KEEP_FULL --force $LOCAL_DUP_DIR
 
 if ! rsync -avh -e "ssh" "$LOCAL_BACKUP_DIRECTORY/" $REMOTE_BACKUP_DIRECTORY --delete ; then
