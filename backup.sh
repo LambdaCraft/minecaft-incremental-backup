@@ -29,7 +29,7 @@ PREFIX_CMD="nice -n18 ionice -c 3"
 DATE_FORMAT="%F_%H-%M-%S"
 TIMESTAMP=$(date +$DATE_FORMAT)
 
-while getopts 'a:cd:e:f:hi:l:m:o:p:qs:v' FLAG; do
+while getopts 'a:cd:e:f:hi:l:m:o:p:qs:r:v' FLAG; do
   case $FLAG in
     c) ENABLE_CHAT_MESSAGES=true ;;
     # e) COMPRESSION_FILE_EXTENSION=".$OPTARG" ;;
@@ -89,7 +89,7 @@ if [[ $LOCAL_BACKUP_DIRECTORY == "" ]]; then
 fi
 
 if [[ $REMOTE_BACKUP_DIRECTORY == "" ]]; then
-  log-fatal "Local backup directory not specified (use -o)"
+  log-fatal "Remote backup directory not specified (use -r)"
   FATAL=true
 fi
 
@@ -153,7 +153,7 @@ START_TIME=$(date +"%s")
 ${PREFIX_CMD} duplicity --no-encryption --allow-source-mismatch --full-if-older-than $BK_FULL_FREQ $DATA_DIR $LOCAL_DUP_DIR
 ${PREFIX_CMD} duplicity --allow-source-mismatch remove-all-but-n-full $BK_KEEP_FULL --force $LOCAL_DUP_DIR
 
-if ! rsync -avh -e "ssh -p22" "$LOCAL_BACKUP_DIRECTORY/" $REMOTE_BACKUP_DIRECTORY --delete ; then
+if ! rsync -avh -e "ssh" "$LOCAL_BACKUP_DIRECTORY/" $REMOTE_BACKUP_DIRECTORY --delete ; then
   message-players-error "Failed to transfer backup to remote server"
 fi
 
